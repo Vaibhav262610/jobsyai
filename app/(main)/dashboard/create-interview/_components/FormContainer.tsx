@@ -17,7 +17,7 @@ type FormContainerProps = {
   OnHandleInputChange: (field: string, value: any) => void;
 };
 
-const FormContainer: React.FC<FormContainerProps> = ({ OnHandleInputChange }) => {
+const FormContainer: React.FC<FormContainerProps> = ({ OnHandleInputChange, GoToNext }) => {
 
    const [interviewType, setInterviewType] = useState<string[]>([]);
 
@@ -50,7 +50,7 @@ const FormContainer: React.FC<FormContainerProps> = ({ OnHandleInputChange }) =>
         </div>
         <div className='mt-5'>
             <h2 className='text-sm font-medium'>Interview Duration</h2>
-            <Select onValueChange={(e) => OnHandleInputChange('jobPosition', e)}>
+            <Select onValueChange={(e) => OnHandleInputChange('duration', e)}>
                 <SelectTrigger className="w-full mt-2">
                     <SelectValue placeholder="Select Duration" />
                 </SelectTrigger>
@@ -75,7 +75,7 @@ const FormContainer: React.FC<FormContainerProps> = ({ OnHandleInputChange }) =>
             </div>
         </div>
         <div className='mt-7 flex justify-end'>
-        <Button>Generate Question <ArrowRight/></Button>
+        <Button onClick={()=> GoToNext()} >Generate Question <ArrowRight/></Button>
         </div>
     </div>
   )
