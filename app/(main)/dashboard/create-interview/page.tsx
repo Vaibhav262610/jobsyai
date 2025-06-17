@@ -17,7 +17,8 @@ const CreateInterview: React.FC = () => {
   const router = useRouter();
   const [step, setStep] = useState<number>(1);
   const [formData, setFormData] = useState<FormData>({});
-  const [interviewId , setInterviewId] = useState()
+ const [interviewId , setInterviewId] = useState<string | null>(null)
+
   
 
   const OnHandleInputChange = (field: string, value: any) => {
@@ -30,16 +31,17 @@ const CreateInterview: React.FC = () => {
   const OnGoToNext = () => {
     if(!formData?.jobPosition || !formData?.jobDescription || !formData?.duration || !formData?.type){
       toast("Please enter all details!")
-      return ;
+      return;
     }else{
       setStep(step+1)
     }
   }
 
-  const onCreateLink = (interview_id) =>{
-    setInterviewId(interview_id)
-    setStep(step+1)
-  }
+  const onCreateLink = (interview_id: string) => {
+  setInterviewId(interview_id)
+  setStep(step + 1) // ✅ use functional update
+}
+
 
   return (
     <div className="mt-10 px-10 md:px-24 lg:px-44 xl:px-56">

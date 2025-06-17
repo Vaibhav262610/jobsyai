@@ -34,79 +34,58 @@ const QuestionLists: React.FC<QuestionListsProps> = ({ formData, onCreateLink })
   }, [formData])
 
   const GenerateQuestionList = async () => {
-  setLoading(true)
-  try {
-    const result = await axios.post('/api/ai-model', { ...formData })
-    let content: string = result.data.content
-
-    // Remove code block markers like ```json and ```
-    content = content.replace(/```json|```/g, '').trim()
-
-    let parsed: any
+    setLoading(true)
     try {
-      // Try parsing full content directly
-      parsed = JSON.parse(content)
-    } catch (e) {
-      // Fallback: extract JSON object from inside any text
-      const match = content.match(/{[\s\S]*}/)
-      if (match) {
-        try {
-          parsed = JSON.parse(match[0])
-        } catch (e2) {
-          console.error("Failed again parsing JSON snippet:", e2)
-          toast("⚠️ Failed to understand AI response. Try regenerating.")
-          return
+      const result = await axios.post('/api/ai-model', {
+        ...formData
+      })
+      
+      if (!result.data.content) {
+        throw new Error('Invalid response from server')
+      }
+
+      try {
+        const parsed = JSON.parse(result.data.content)
+        if (!parsed.interviewQuestions || !Array.isArray(parsed.interviewQuestions)) {
+          throw new Error('Invalid question format')
         }
-      } else {
-        console.error("No JSON found in AI response")
-        toast("⚠️ Invalid format from AI. Please try again.")
-        return
+        setQuestionList(parsed.interviewQuestions)
+      } catch (parseError) {
+        console.error('Error parsing questions:', parseError)
+        toast.error('Failed to parse questions. Please try again.')
       }
     }
-
-    const questions: QuestionItem[] = parsed?.interviewQuestions || []
-    setQuestionList(questions)
-  } catch (error) {
-    console.error("Failed to generate questions:", error)
-    toast('🚨 Server error, try again later!')
-  } finally {
-    setLoading(false)
+    catch(error) {
+      console.error('Error generating questions:', error)
+      const errorMessage = error.response?.data?.error || 'Server Error! Please try again'
+      toast.error(errorMessage)
+    }
+    finally {
+      setLoading(false)
+    }
   }
-}
-
+  console.log(user);
 
   const onFinish = async () => {
-  setSaveLoading(true)
-  const interview_id = uuidv4()
+    // setSaveLoading(true)  
+    const interview_id = uuidv4()
+    console.log(interview_id);
+    console.log(formData);
+    const {data , error} = await supabase
+    .from("Interview")
+    .insert([{
+      ...formData,
+      questionList:questionList,
+      userEmail:user?.email,
+      interview_id:interview_id
+    }])
+    .select()
+    console.log(data);
+    setSaveLoading(false)
+    
 
-  console.log("Saving interview with data:", {
-    ...formData,
-    questionList,
-    userEmail: user?.email || '',
-    interview_id
-  })
-
-  const { error } = await supabase
-    .from('Interview')
-    .insert([
-      {
-        ...formData,
-        questionList,
-        userEmail: user?.email || '',
-        interview_id
-      },
-    ])
-
-  setSaveLoading(false)
-
-  if (error) {
-    console.error("Insert failed:", error)
-    toast("Could not save interview data. Try again.")
-    return
+    onCreateLink(interview_id)
   }
-
-  onCreateLink(interview_id)
-}
 
 
   return (
@@ -138,9 +117,18 @@ const QuestionLists: React.FC<QuestionListsProps> = ({ formData, onCreateLink })
       )}
 
       <div className='flex justify-end mt-10'>
-        <Button onClick={onFinish} disabled={saveLoading}>
-          {saveLoading && <Loader2Icon className='animate-spin mr-2' />}
-          Create Interview Link & Finish
+        <Button 
+          onClick={onFinish} 
+          disabled={saveLoading || loading || questionList.length === 0}
+        >
+          {saveLoading ? (
+            <>
+              <Loader2Icon className='animate-spin mr-2' />
+              Creating Interview...
+            </>
+          ) : (
+            'Create Interview Link & Finish'
+          )}
         </Button>
       </div>
     </div>

@@ -2,11 +2,12 @@
 
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { InterviewDataContext } from '@/context/InterviewDataContext'
 import { supabase } from '@/services/supabaseClient'
-import { Clock, Video } from 'lucide-react'
+import { Clock, Loader2Icon, Video } from 'lucide-react'
 import Image from 'next/image'
-import { useParams } from 'next/navigation'
-import React, { useEffect, useState } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import React, { useContext, useEffect, useState } from 'react'
 
 interface InterviewData {
   jobPosition: string
@@ -20,6 +21,8 @@ const page = () => {
     const [interviewData, setInterviewData] = useState<InterviewData | null>(null)
     const [loading, setLoading] = useState(false)
     const [userName, setUserName] = useState<string>("")
+    const {interviewInfo, setInterviewInfo} = useContext(InterviewDataContext)
+    const router = useRouter()
 
     const params = useParams()
     const interview_id = params.interview_id as string
@@ -52,6 +55,23 @@ const getInterviewDetails = async () => {
   }
 }
 
+const OnJoinInterview =async () => {
+    setLoading(true)
+    let { data: Interview, error } = await supabase
+    .from('Interview')
+    .select('*')
+    .eq('interview_id',interview_id)
+    
+    console.log(Interview[0]);
+    setInterviewInfo({
+        userName:userName,
+        interviewData:Interview[0]
+    })
+    router.push('/interview/'+interview_id+'/start')
+    setLoading(false)
+  
+}
+
 
 
   return (
@@ -66,7 +86,7 @@ const getInterviewDetails = async () => {
                 <h2>Enter your full name</h2>
                 <Input placeholder='eg. John Wick' onChange={(e) => setUserName(e.target.value)} />
             </div>
-            <Button disabled={loading || !userName} className='mt-5 w-full font-bold'><Video/> Join Interview</Button>
+            <Button onClick={() => OnJoinInterview()} disabled={loading || !userName} className='mt-5 w-full font-bold'><Video/>{loading&&<Loader2Icon className='animate-spin'/>} Join Interview</Button>
         </div>
     </div>
   )

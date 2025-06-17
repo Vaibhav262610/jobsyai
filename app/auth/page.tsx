@@ -7,15 +7,19 @@ import React from 'react'
 
 const page = () => {
 
-  const signinWithGoogle = async () => {
-    const {error} =  await supabase.auth.signInWithOAuth({
-      provider: "google"
-    })
-
-    if(error){
-      console.error("ERROR IN LOGGING",error.message)
+ const signinWithGoogle = async () => {
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: 'http://localhost:3000/' // or your deployed URL
     }
+  })
+
+  if (error) {
+    console.error("ERROR IN LOGGING", error.message)
+  }
 }
+
 
 
   return (
