@@ -18,6 +18,7 @@ const CreateInterview: React.FC = () => {
   const [step, setStep] = useState<number>(1);
   const [formData, setFormData] = useState<FormData>({});
   const [interviewId , setInterviewId] = useState()
+  
 
   const OnHandleInputChange = (field: string, value: any) => {
     setFormData((prev) => ({

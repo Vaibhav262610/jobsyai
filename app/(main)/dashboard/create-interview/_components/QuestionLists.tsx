@@ -76,30 +76,38 @@ const QuestionLists: React.FC<QuestionListsProps> = ({ formData, onCreateLink })
 
 
   const onFinish = async () => {
-    setSaveLoading(true)
-    const interview_id = uuidv4()
+  setSaveLoading(true)
+  const interview_id = uuidv4()
 
-    const { error } = await supabase
-      .from('Interview')
-      .insert([
-        {
-          ...formData,
-          questionList,
-          userEmail: user?.email || '',
-          interview_id
-        },
-      ])
+  console.log("Saving interview with data:", {
+    ...formData,
+    questionList,
+    userEmail: user?.email || '',
+    interview_id
+  })
 
-    setSaveLoading(false)
+  const { error } = await supabase
+    .from('Interview')
+    .insert([
+      {
+        ...formData,
+        questionList,
+        userEmail: user?.email || '',
+        interview_id
+      },
+    ])
 
-    if (error) {
-      console.error("Insert failed:", error)
-      toast("Could not save interview data. Try again.")
-      return
-    }
+  setSaveLoading(false)
 
-    onCreateLink(interview_id)
+  if (error) {
+    console.error("Insert failed:", error)
+    toast("Could not save interview data. Try again.")
+    return
   }
+
+  onCreateLink(interview_id)
+}
+
 
   return (
     <div>
