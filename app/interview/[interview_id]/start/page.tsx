@@ -7,6 +7,9 @@ import React, { useContext, useEffect, useState } from 'react'
 import Vapi from '@vapi-ai/web';
 import AlertConfirmation from './_components/AlertConfirmation'
 import { toast } from 'sonner'
+import axios from 'axios'
+import { supabase } from '@/services/supabaseClient'
+import { useParams, useRouter } from 'next/navigation'
 
 
 const StartInterview = () => {
@@ -14,7 +17,10 @@ const StartInterview = () => {
   const {interviewInfo, setInterviewInfo} = useContext(InterviewDataContext)
   const vapi = new Vapi(process.env.NEXT_PUBLIC_API_KEY!);
   const [activeUser, setActiveUser ]= useState(false)
-  
+  const [conversation, setConversation ]= useState()
+  const {interview_id} = useParams()
+  const router = useRouter()
+
   useEffect(() => {
     interviewInfo&&startCall()
   },[interviewInfo])
@@ -85,6 +91,7 @@ const StartInterview = () => {
   vapi.on("call-end", () => {
     toast('Interview has ended')
     console.log("Call Ended ");
+    GenerateFeedback()
   })
 
   vapi.on("speech-start", () => {
@@ -95,11 +102,40 @@ const StartInterview = () => {
   vapi.on("speech-end", () => {
     setActiveUser(true)
     console.log("Assistant speech has ended ");
+    
+  })
+  
+  vapi.on("message", (message) => {
+    console.log(message?.conversation);
+    setConversation(message?.conversation)
   })
 
   const stopInterview = ()=> {
     vapi.stop()
   }
+
+const GenerateFeedback = async () => {
+  const result = await axios.post('/api/ai-feedback',{
+    conversation:conversation
+  })
+  const Content = result?.data.content
+  const FINAL_CONTENT = Content.replace('```json','').replace('```','')
+  const { data, error } = await supabase
+  .from('Feedback')
+  .insert([
+    { 
+      userName:interviewInfo?.userName,
+      userEmail:interviewInfo?.userEmail,
+      interview_id:interview_id,
+      feedback:JSON.parse(FINAL_CONTENT),
+      recommended: false
+     },
+  ])
+  .select()
+  console.log(data);
+  router.replace('/interview/'+interview_id+'/completed')
+}
+
 
 
   return (
