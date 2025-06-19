@@ -1,12 +1,12 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState, ReactNode } from 'react'
 import Header from './_components/Header'
 import { InterviewDataContext } from '@/context/InterviewDataContext'
+import type { InterviewInfo } from '@/context/InterviewDataContext'
 
-const InterviewLayout = ({children}) => {
-  const [interviewInfo, setInterviewInfo] = useState()
-
+const InterviewLayout = ({children}: {children: ReactNode}) => {
+  const [interviewInfo, setInterviewInfo] = useState<InterviewInfo | null>(null)
 
     return (
     <InterviewDataContext.Provider value={{interviewInfo, setInterviewInfo}}>

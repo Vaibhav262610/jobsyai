@@ -5,6 +5,7 @@ import { Mic, Phone, Timer, Volume2, VolumeX } from 'lucide-react'
 import Image from 'next/image'
 import React, { useContext, useEffect, useState } from 'react'
 import Vapi from '@vapi-ai/web'
+import type { CreateAssistantDTO } from '@vapi-ai/web/dist/api'
 import AlertConfirmation from './_components/AlertConfirmation'
 import { toast } from 'sonner'
 import axios from 'axios'
@@ -48,7 +49,7 @@ const StartInterview = () => {
       questionList = item?.question + (questionList ? ',' + questionList : '');
     });
 
-    const assistantOptions = {
+    const assistantOptions: CreateAssistantDTO = {
       name: "AI Recruiter",
       firstMessage: "Hi "+interviewInfo?.userName +", how are you? Ready for your interview on"+ interviewInfo?.interviewData?.jobPosition,
       transcriber: {
@@ -61,7 +62,7 @@ const StartInterview = () => {
           voiceId: "jennifer",
       },
       model: {
-          provider: "openai-com" as const,
+          provider: "openai" as const,
           model: "gpt-4",
           messages: [
               {

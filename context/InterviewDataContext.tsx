@@ -1,6 +1,6 @@
 import { createContext } from "react";
 
-interface InterviewInfo {
+export interface InterviewInfo {
   userName: string;
   userEmail: string;
   interviewData: any; // You can make this more specific based on your data structure
