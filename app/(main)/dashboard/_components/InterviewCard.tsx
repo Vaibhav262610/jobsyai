@@ -21,7 +21,7 @@ interface InterviewCardProps {
   viewDetail?: boolean
 }
 
-const InterviewCard: React.FC<InterviewCardProps> = ({interview, viewDetail=false}) => {
+const InterviewCard: React.FC<InterviewCardProps> = ({interview, viewDetail}) => {
     const url = process.env.NEXT_PUBLIC_HOST_URL+"/"+interview?.interview_id; 
     
     // Debug logs
@@ -59,7 +59,7 @@ const InterviewCard: React.FC<InterviewCardProps> = ({interview, viewDetail=fals
             <Button onClick={onSend}><Send />Send</Button>
         </div> :
         <Link href={'/scheduled-interview/'+interview?.interview_id+'/details'}>
-            <Button className='mt-5 w-full' variant={'outline'}>Video Details <ArrowRight /></Button>
+            <Button className='mt-5 w-full' variant={'outline'}>View Details <ArrowRight /></Button>
         </Link>
         }
     </div>
