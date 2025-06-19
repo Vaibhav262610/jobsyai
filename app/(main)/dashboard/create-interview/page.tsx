@@ -8,6 +8,8 @@ import FormContainer from "./_components/FormContainer";
 import QuestionLists from "./_components/QuestionLists";
 import { toast } from "sonner";
 import InterviewLink from "./_components/InterviewLink";
+import { useUser } from "@/app/provider";
+import { supabase } from "@/services/supabaseClient";
 
 type FormData = {
   [key: string]: any;
@@ -15,10 +17,10 @@ type FormData = {
 
 const CreateInterview: React.FC = () => {
   const router = useRouter();
+  const {user} = useUser()
   const [step, setStep] = useState<number>(1);
   const [formData, setFormData] = useState<FormData>({});
  const [interviewId , setInterviewId] = useState<string | null>(null)
-
   
 
   const OnHandleInputChange = (field: string, value: any) => {
@@ -28,7 +30,30 @@ const CreateInterview: React.FC = () => {
     }));
   };
 
-  const OnGoToNext = () => {
+  console.log("user data ", user?.email);
+  const OnGoToNext =async () => {
+    let credits = await supabase
+    .from('Users')
+    .select('credits')
+    .eq('email',user?.email)
+    if (credits.data) {
+      const myCredits = credits.data[0]?.credits;
+      console.log(myCredits);
+    } else {
+      console.error("No CREDIT data returned from Supabase:", credits.error);
+    }
+    
+   if (!credits.data || credits.data[0]?.credits <= 0) {
+      toast('Please Add Credits!');
+      return;
+    } else {
+      await supabase
+        .from('User')
+        .update({ credits: Number(user?.credits) - 1 })
+        .eq('email', user?.email)
+        .select();
+    }
+
     if(!formData?.jobPosition || !formData?.jobDescription || !formData?.duration || !formData?.type){
       toast("Please enter all details!")
       return;

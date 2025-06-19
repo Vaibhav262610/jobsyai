@@ -15,6 +15,7 @@ import { ArrowRight } from 'lucide-react'
 
 type FormContainerProps = {
   OnHandleInputChange: (field: string, value: any) => void;
+  GoToNext: () => Promise<void>;
 };
 
 const FormContainer: React.FC<FormContainerProps> = ({ OnHandleInputChange, GoToNext }) => {

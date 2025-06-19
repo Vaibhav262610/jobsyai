@@ -10,26 +10,27 @@ import React, {
 } from "react";
 import { User } from "@supabase/supabase-js";
 
-// Define the context type
+type ExtendedUser = User & {
+  credits: number;
+  name?: string;
+  picture?: string;
+};
+
 type UserContextType = {
-  user: User | null;
+  user: ExtendedUser | null;
 };
 
 const UserContext = createContext<UserContextType>({ user: null });
 
-// Hook to consume user context
 export const useUser = () => useContext(UserContext);
 
-// Props type
 type ProviderProps = {
   children: ReactNode;
 };
 
-// Your main provider component
 const Provider: React.FC<ProviderProps> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<ExtendedUser | null>(null);
 
-  // Run on first load and also when auth changes
   useEffect(() => {
     const syncUser = async () => {
       const {
@@ -37,8 +38,8 @@ const Provider: React.FC<ProviderProps> = ({ children }) => {
       } = await supabase.auth.getSession();
 
       if (session?.user) {
-        setUser(session.user);
-        await CreateNewUser(session.user);
+        const fullUser = await fetchExtendedUser(session.user);
+        setUser(fullUser);
       }
     };
 
@@ -47,8 +48,8 @@ const Provider: React.FC<ProviderProps> = ({ children }) => {
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         if (event === "SIGNED_IN" && session?.user) {
-          setUser(session.user);
-          await CreateNewUser(session.user);
+          const fullUser = await fetchExtendedUser(session.user);
+          setUser(fullUser);
         } else if (event === "SIGNED_OUT") {
           setUser(null);
         }
@@ -60,35 +61,27 @@ const Provider: React.FC<ProviderProps> = ({ children }) => {
     };
   }, []);
 
-  const CreateNewUser = async (user: User) => {
-    const { data: existingUsers, error } = await supabase
+  const fetchExtendedUser = async (authUser: User): Promise<ExtendedUser> => {
+    const { data, error } = await supabase
       .from("Users")
-      .select("*")
-      .eq("email", user.email);
+      .select("credits, name, picture")
+      .eq("email", authUser.email)
+      .single();
 
-    if (error) {
-      console.error("Error checking for existing user:", error);
-      return;
+    if (error || !data) {
+      console.log("Error fetching user profile:", error);
+      return {
+        ...authUser,
+        credits: 0,
+      };
     }
 
-    if (existingUsers?.length === 0) {
-      const { error: insertError } = await supabase.from("Users").insert([
-        {
-          name: user.user_metadata?.name,
-          email: user.email,
-          picture: user.user_metadata?.picture,
-        },
-      ]);
-
-      if (insertError) {
-        console.error("Error inserting user:", insertError);
-      } else {
-        console.log("✅ User inserted:", {
-          name: user.user_metadata?.name,
-          email: user.email,
-        });
-      }
-    }
+    return {
+      ...authUser,
+      credits: data.credits,
+      name: data.name,
+      picture: data.picture,
+    };
   };
 
   return (

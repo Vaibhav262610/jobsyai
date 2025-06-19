@@ -12,6 +12,8 @@ type InterviewType = {
   jobPosition: string
   duration: string
   interview_id: string
+  created_at: string
+  type:string
   Feedback: {
     userEmail: string
   }[]
@@ -60,7 +62,7 @@ const Page: React.FC = () => {
       {interviewList.length > 0 && (
         <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mt-5">
           {interviewList.map((item, index) => (
-            <InterviewCard viewDetail={true} interview={item} key={index} />
+            <InterviewCard interview={item} key={index} />
           ))}
         </div>
       )}

@@ -24,8 +24,12 @@ const path = usePathname()
   return (
     <Sidebar>
       <SidebarHeader className="items-center flex  mt-5">
-        <Image src={'/logo.png'} alt="logo" width={150} height={200} />
-        <Button className="w-full mt-5 py-7"><Plus/>Create New Interview</Button>
+        <Link href="/dashboard" className="cursor-pointer">
+          <Image src={'/logo.png'} alt="logo" width={150} height={200} />
+        </Link>
+        <Link href="/dashboard/create-interview" className="cursor-pointer">
+          <Button className="w-full mt-5 py-7"><Plus/>Create New Interview</Button>
+        </Link>
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup >

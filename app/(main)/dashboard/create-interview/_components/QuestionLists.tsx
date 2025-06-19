@@ -57,14 +57,14 @@ const QuestionLists: React.FC<QuestionListsProps> = ({ formData, onCreateLink })
     }
     catch(error) {
       console.error('Error generating questions:', error)
-      const errorMessage = error.response?.data?.error || 'Server Error! Please try again'
+      const errorMessage = 'Server Error! Please try again'
       toast.error(errorMessage)
     }
     finally {
       setLoading(false)
     }
   }
-  console.log(user);
+  // console.log(user);
 
   const onFinish = async () => {
     // setSaveLoading(true)  
@@ -82,6 +82,12 @@ const QuestionLists: React.FC<QuestionListsProps> = ({ formData, onCreateLink })
     .select()
     console.log(data);
     setSaveLoading(false)
+
+    const userUpdate = await supabase
+    .from('User')
+    .update({credits: Number(user?.credits)-1})
+    .eq('email' , user?.email)
+    .select()
     
 
     onCreateLink(interview_id)

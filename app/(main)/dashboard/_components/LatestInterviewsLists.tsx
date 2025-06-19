@@ -7,11 +7,22 @@ import { Camera, Video } from 'lucide-react'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import InterviewCard from './InterviewCard'
-import { toast } from 'sonner'
+
+type InterviewType = {
+  jobPosition: string
+  duration: string
+  interview_id: string
+  created_at: string
+  type:string
+  Feedback: {
+    userEmail: string
+  }[]
+}
+
 
 const LatestInterviewsLists = () => {
 
-    const [interviewList, setInterviewList] = useState([])
+    const [interviewList, setInterviewList] = useState<InterviewType[]>([]);
     const {user} = useUser()
 
 
@@ -27,8 +38,16 @@ const LatestInterviewsLists = () => {
       .eq("userEmail",user?.email)
       .order('id',{ ascending : false })
       .limit(6)
-
-      setInterviewList(Interview)
+      
+      if (error) {
+        console.error("Error fetching interviews:", error);
+        return;
+      }
+      if (Interview) {
+        setInterviewList(Interview); // Now safe
+      } else {
+        setInterviewList([]); // Optional: reset to empty array if null
+      }
     }
 
     
