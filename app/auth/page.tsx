@@ -15,7 +15,7 @@ const page = () => {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: 'http://localhost:3000/' // or your deployed URL
+      redirectTo: process.env.NEXT_PUBLIC_HOST_URL+'/dashboard' // or your deployed URL
     }
   })
 

@@ -5,6 +5,7 @@ import React from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowRight, Brain, Users, Clock, Sparkles, CheckCircle2 } from 'lucide-react'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 
 const HomePage = () => {
   const router = useRouter()
@@ -44,20 +45,16 @@ const HomePage = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="flex flex-col sm:flex-row gap-4 items-center"
           >
-            <Button 
-              size="lg"
-              className="text-lg px-8 py-6 rounded-full bg-primary hover:bg-primary/90 transition-all hover:scale-105"
-              onClick={() => router.push('/dashboard')}
-            >
-              Get Started <ArrowRight className="ml-2" />
-            </Button>
-            <Button 
-              size="lg"
-              variant="outline"
-              className="text-lg px-8 py-6 rounded-full border-gray-700 hover:bg-gray-800 transition-all"
-            >
-              Watch Demo
-            </Button>
+            <Link href="/auth">
+              <Button 
+                size="lg"
+                className="text-lg px-8 py-6 rounded-full bg-primary hover:bg-primary/90 transition-all hover:scale-105"
+                onClick={() => router.push('/auth')}
+                >
+                Get Started <ArrowRight className="ml-2" />
+              </Button>
+              </Link>
+          
           </motion.div>
 
           {/* Stats */}
@@ -143,13 +140,15 @@ const HomePage = () => {
           <p className="text-gray-400 mb-8 text-lg">
             Join thousands of companies already using JOBSY.AI to make better hiring decisions
           </p>
-          <Button 
-            size="lg"
-            className="text-lg px-8 py-6 rounded-full bg-primary hover:bg-primary/90 transition-all hover:scale-105"
-            onClick={() => router.push('/dashboard')}
-          >
-            Start Free Trial <ArrowRight className="ml-2" />
-          </Button>
+          <Link href="/auth">
+            <Button 
+              size="lg"
+              className="text-lg px-8 py-6 rounded-full bg-primary hover:bg-primary/90 transition-all hover:scale-105"
+              onClick={() => router.push('/dashboard')}
+              >
+              Start Free Trial <ArrowRight className="ml-2" />
+            </Button>
+            </Link>
         </motion.div>
       </div>
     </div>
