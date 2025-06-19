@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,7 +11,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 
-const AlertConfirmation = ({children , stopInterview}) => {
+const AlertConfirmation = ({children , stopInterview}: {children: ReactNode, stopInterview: () => void}) => {
   return (
     <AlertDialog>
   <AlertDialogTrigger>{children}</AlertDialogTrigger>

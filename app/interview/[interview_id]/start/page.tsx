@@ -43,30 +43,30 @@ const StartInterview = () => {
   }
 
   const startCall = () => {
-    let questionList;
-    interviewInfo?.interviewData?.questionList.forEach((item,index) =>  {
-      questionList=item?.question+','+questionList
-    })
+    let questionList: string = '';
+    interviewInfo?.interviewData?.questionList?.forEach((item: { question: string }, index: number) =>  {
+      questionList = item?.question + (questionList ? ',' + questionList : '');
+    });
 
     const assistantOptions = {
-          name: "AI Recruiter",
-          firstMessage: "Hi "+interviewInfo?.userName +", how are you? Ready for your interview on"+ interviewInfo?.interviewData?.jobPosition,
-          transcriber: {
-              provider: "deepgram",
-              model: "nova-2",
-              language: "en-US",
-          },
-          voice: {
-              provider: "playht",
-              voiceId: "jennifer",
-          },
-          model: {
-              provider: "openai",
-              model: "gpt-4",
-              messages: [
-                  {
-                      role: "system",
-                      content: `
+      name: "AI Recruiter",
+      firstMessage: "Hi "+interviewInfo?.userName +", how are you? Ready for your interview on"+ interviewInfo?.interviewData?.jobPosition,
+      transcriber: {
+          provider: "deepgram" as const,
+          model: "nova-2",
+          language: "en-US" as const,
+      },
+      voice: {
+          provider: "playht",
+          voiceId: "jennifer",
+      },
+      model: {
+          provider: "openai-com" as const,
+          model: "gpt-4",
+          messages: [
+              {
+                  role: "system" as const,
+                  content: `
         You are an AI voice assistant conducting interviews.
       Your job is to ask candidates provided interview questions, assess their responses.
       Begin the conversation with a friendly introduction, setting a relaxed yet professional tone. Example:
@@ -89,14 +89,12 @@ const StartInterview = () => {
       ✅ Adapt based on the candidate's confidence level
       ✅ Ensure the interview remains focused on React
       `.trim(),
-                  },
-              ],
-          },
-      };
+              },
+          ],
+      },
+    };
 
-
-      vapi.start(assistantOptions)
-
+    vapi.start(assistantOptions)
   }
   
   vapi.on("call-start", () => {
