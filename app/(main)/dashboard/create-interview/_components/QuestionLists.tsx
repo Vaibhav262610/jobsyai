@@ -71,6 +71,11 @@ const QuestionLists: React.FC<QuestionListsProps> = ({ formData, onCreateLink })
     const interview_id = uuidv4()
     console.log(interview_id);
     console.log(formData);
+    if (!supabase) {
+      toast.error('Database connection not available')
+      setSaveLoading(false)
+      return
+    }
     const {data , error} = await supabase
     .from("Interview")
     .insert([{

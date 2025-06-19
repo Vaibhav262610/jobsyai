@@ -32,6 +32,11 @@ const LatestInterviewsLists = () => {
 
 
     const GetInterviewList = async() => {
+      if (!supabase) {
+        console.error("Database connection not available");
+        setInterviewList([]);
+        return;
+      }
       let {data: Interview, error }= await supabase
       .from('Interview')
       .select("*")

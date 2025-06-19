@@ -32,6 +32,10 @@ const Page = () => {
   }, [user]);
 
   const GetInterviewList = async () => {
+    if (!supabase) {
+      setInterviewDetails(null);
+      return;
+    }
     const result = await supabase
       .from('Interview')
       .select('jobPosition, duration, jobDescription, type, questionList, created_at, interview_id, Feedback(userEmail, userName, feedback, created_at)')

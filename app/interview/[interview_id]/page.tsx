@@ -38,26 +38,35 @@ const page = () => {
 
 const getInterviewDetails = async () => {
     setLoading(true)
-  const { data, error } = await supabase
-    .from('Interview')
-    .select('jobPosition, jobDescription, duration, type')
-    .eq('interview_id', interview_id)
-    .single()
+    if (!supabase) {
+      setInterviewData(null)
+      setLoading(false)
+      return
+    }
+    const { data, error } = await supabase
+      .from('Interview')
+      .select('jobPosition, jobDescription, duration, type')
+      .eq('interview_id', interview_id)
+      .single()
     
-  setInterviewData(data)
-  setLoading(false)
-  if (error) {
-    console.error('❌ Supabase fetch error:', error)
-  } else if (!data) {
-    console.warn('⚠️ No data returned for interview_id:', interview_id)
-  } else {
-    console.log('✅ Interview details:', data)
-    // Optional: Set state here if you want to display it
+    setInterviewData(data)
+    setLoading(false)
+    if (error) {
+      console.error('❌ Supabase fetch error:', error)
+    } else if (!data) {
+      console.warn('⚠️ No data returned for interview_id:', interview_id)
+    } else {
+      console.log('✅ Interview details:', data)
+      // Optional: Set state here if you want to display it
+    }
   }
-}
 
 const OnJoinInterview =async () => {
     setLoading(true)
+    if (!supabase) {
+      setLoading(false)
+      return
+    }
     let { data: Interview, error } = await supabase
     .from('Interview')
     .select('*')

@@ -136,6 +136,10 @@ const GenerateFeedback = async () => {
   })
   const Content = result?.data.content
   const FINAL_CONTENT = Content.replace('```json','').replace('```','')
+  if (!supabase) {
+    router.push('/interview/'+interview_id+'/completed')
+    return
+  }
   const { data, error } = await supabase
   .from('Feedback')
   .insert([

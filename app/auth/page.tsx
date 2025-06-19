@@ -8,6 +8,10 @@ import React from 'react'
 const page = () => {
 
  const signinWithGoogle = async () => {
+  if (!supabase) {
+    console.error('Database connection not available')
+    return
+  }
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {

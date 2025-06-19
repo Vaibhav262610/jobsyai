@@ -32,6 +32,11 @@ const Page = () => {
   }, [user]);
 
   const GetInterviewList = async () => {
+    if (!supabase) {
+      toast.error("Database connection not available");
+      return;
+    }
+
     const { data: Interview, error } = await supabase
       .from("Interview")
       .select("*")

@@ -30,6 +30,11 @@ const Page: React.FC = () => {
 
   const GetInterviewList = async () => {
     setLoading(true)
+    if (!supabase) {
+      setInterviewList([])
+      setLoading(false)
+      return
+    }
     const { data, error } = await supabase
       .from('Interview')
       .select('jobPosition, duration, interview_id, Feedback(userEmail)')

@@ -36,6 +36,10 @@ export default function BillingPage() {
   }, [user?.email])
 
   const fetchUserData = async () => {
+    if (!supabase) {
+      toast.error('Database connection not available')
+      return
+    }
     try {
       const { data, error } = await supabase
         .from('User')
@@ -52,6 +56,11 @@ export default function BillingPage() {
   }
 
   const fetchBillingHistory = async () => {
+    if (!supabase) {
+      toast.error('Database connection not available')
+      setLoading(false)
+      return
+    }
     try {
       const { data, error } = await supabase
         .from('BillingHistory')
@@ -74,7 +83,10 @@ export default function BillingPage() {
       toast.error('Please login to purchase credits')
       return
     }
-
+    if (!supabase) {
+      toast.error('Database connection not available')
+      return
+    }
     try {
       // First update user credits
       const { error: updateError } = await supabase
@@ -98,7 +110,6 @@ export default function BillingPage() {
 
       setCredits(credits + amount)
       toast.success(`Successfully purchased ${amount} credits!`)
-      
       // Refresh the billing history
       fetchBillingHistory()
     } catch (error) {

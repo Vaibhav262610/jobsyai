@@ -32,7 +32,16 @@ const Provider: React.FC<ProviderProps> = ({ children }) => {
   const [user, setUser] = useState<ExtendedUser | null>(null);
 
   useEffect(() => {
+    // Only run Supabase operations if client is available
+    if (!supabase) {
+      console.warn('Supabase client not available');
+      return;
+    }
+
     const syncUser = async () => {
+      if (!supabase) {
+        return;
+      }
       const {
         data: { session },
       } = await supabase.auth.getSession();
@@ -46,7 +55,7 @@ const Provider: React.FC<ProviderProps> = ({ children }) => {
     syncUser();
 
     const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (event: string, session: any) => {
         if (event === "SIGNED_IN" && session?.user) {
           const fullUser = await fetchExtendedUser(session.user);
           setUser(fullUser);
@@ -62,6 +71,13 @@ const Provider: React.FC<ProviderProps> = ({ children }) => {
   }, []);
 
   const fetchExtendedUser = async (authUser: User): Promise<ExtendedUser> => {
+    if (!supabase) {
+      return {
+        ...authUser,
+        credits: 0,
+      };
+    }
+
     const { data, error } = await supabase
       .from("Users")
       .select("credits, name, picture")

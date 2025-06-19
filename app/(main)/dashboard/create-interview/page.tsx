@@ -39,6 +39,10 @@ const CreateInterview: React.FC = () => {
   };
 
   const OnGoToNext = async () => {
+    if (!supabase) {
+      toast("Database connection not available!");
+      return;
+    }
     const credits = await supabase
       .from("Users")
       .select("credits")
