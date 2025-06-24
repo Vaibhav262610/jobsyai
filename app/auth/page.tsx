@@ -27,13 +27,13 @@ const page = () => {
 
 
   return (
-    <div className='flex flex-col h-screen justify-center items-center'>
-      <div className='flex flex-col items-center border rounded-2xl p-8'>
+    <div className='flex flex-col h-screen bg-black/80 justify-center items-center'>
+      <div className='flex flex-col items-center bg-white border rounded-2xl p-8'>
             <Image src={'/logo.png'} alt='login' height={200} width={200} className='mb-2' />
           {/* <h1 className='text-3xl font-black uppercase '>AiCruiter</h1> */}
           <div className='flex flex-col items-center'>
             <Image src={'/login.png'} alt='login' height={400} width={400} className='rounded-2xl' />
-            <h2 className='text-2xl text-center font-bold mt-5'>Welcome to AiCruiter</h2>
+            <h2 className='text-2xl text-center font-bold mt-5'>Welcome to Jobsyai</h2>
             <p className='text-gray-500 text-center'>Sign In With Google Authentication</p>
             <Button onClick={signinWithGoogle} className='mt-7 w-full'>Login with Google</Button>
           </div>
